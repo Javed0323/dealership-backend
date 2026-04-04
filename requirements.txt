@@ -12,3 +12,4 @@ slowapi
 python-multipart
 psycopg2-binary
 email-validator
+argon2-cffi
