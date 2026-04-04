@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost/cars_db")
+print(f"DATABASE_URL: {URL}")  # temporary debug statement
 engine = create_engine(URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
