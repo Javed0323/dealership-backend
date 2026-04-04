@@ -22,6 +22,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
+        "https://dealership-frontend-0323.vercel.app/",
     ],
     allow_credentials=True,
     allow_methods=["*"],
