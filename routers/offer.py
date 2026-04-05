@@ -11,8 +11,22 @@ router = APIRouter(
     dependencies=[Security(get_verified_admin)], prefix="/offers", tags=["offers"]
 )
 
+# get active offers for customers (filter by inventory status = available)
+publicRouter = APIRouter(prefix="/offers", tags=["offers"])
+@publicRouter.get("/")
+def get_offers_public(db: Session = Depends(get_db)):
+    db_offers = (
+        db.query(Offer)
+        .join(models.Inventory)
+        .filter(models.Inventory.status == "available")
+        .all()
+    )
+    if not db_offers:
+        raise HTTPException(status_code=404, detail="No offers found")
+    return db_offers
 
-@router.get("/")
+
+@router.get("/admin/")
 def get_offers(db: Session = Depends(get_db)):
     db_offers = db.query(Offer).all()
     if not db_offers:

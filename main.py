@@ -9,7 +9,6 @@ from routers import (
     payment,
     test_drive,
     user,
-    site_setting,
     inventory,
     dashboard,
     carMedia,
@@ -49,6 +48,7 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
 
 
 app.include_router(auth.router)
+app.include_router(cars.publicRouter)
 app.include_router(cars.router)
 app.include_router(customers.router)
 app.include_router(offer.router)
@@ -56,7 +56,7 @@ app.include_router(sale.router)
 app.include_router(payment.router)
 app.include_router(test_drive.router)
 app.include_router(user.router)
-# app.include_router(site_setting.router)
 app.include_router(inventory.router)
 app.include_router(dashboard.router)
 app.include_router(carMedia.media_router)
+app.include_router(offer.publicRouter)

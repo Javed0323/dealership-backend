@@ -33,7 +33,9 @@ RELATED_MODELS = {
 RESERVED = {"sort", "limit", "offset"}
 
 
-@router.get("/search")
+# do not guard this router since it's used for both public search and admin CRUD
+publicRouter = APIRouter(prefix="/cars", tags=["cars"])
+@publicRouter.get("/search")
 def search_cars(
     request: Request,
     sort: str = None,  # type: ignore
@@ -74,6 +76,10 @@ def search_cars(
         "results": query.all(),
     }
 
+# add a test endpoint to verify that the public router is working without auth
+@publicRouter.get("/test")
+def test_public_router(db: Session = Depends(get_db)):
+    return {"message": "Public router is working", "car_count": db.query(Car).count()}
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
