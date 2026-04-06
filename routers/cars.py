@@ -12,7 +12,7 @@ from schemas import (
     CarFeaturesCreate,
 )
 from security import get_verified_admin
-from services.query_utils import apply_pagination, apply_filters, apply_sorting
+from services.query_utils import apply_pagination, apply_filters, apply_search, apply_sorting
 from models import Inventory
 
 router = APIRouter(
@@ -44,6 +44,7 @@ def search_cars(
     db: Session = Depends(get_db),
 ):
     filters = {k: v for k, v in request.query_params.items() if k not in RESERVED}
+    search = filters.pop("search", None)
 
     joined = set()  # shared between filter + sort so we don't double-join
 
@@ -61,6 +62,7 @@ def search_cars(
         )
         .filter(Inventory.status == "available")  # only available cars for customers
     )
+    query = apply_search(query, search, Car, RELATED_MODELS, joined) # type: ignore
 
     query = apply_filters(query, Car, filters, RELATED_MODELS, joined)
     query = apply_sorting(query, Car, sort, RELATED_MODELS, joined)

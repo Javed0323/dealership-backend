@@ -12,6 +12,7 @@ from routers import (
     inventory,
     dashboard,
     carMedia,
+    Contact,
 )
 
 app = FastAPI()
@@ -60,3 +61,4 @@ app.include_router(inventory.router)
 app.include_router(dashboard.router)
 app.include_router(carMedia.media_router)
 app.include_router(offer.publicRouter)
+app.include_router(Contact.router)

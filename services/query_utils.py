@@ -1,7 +1,13 @@
 # services/query_utils.py
 
+from operator import or_
+
+from sqlalchemy import String, String, or_
 from sqlalchemy.orm import Query, joinedload
-from sqlalchemy.sql.sqltypes import Integer, Float, Boolean
+from sqlalchemy.sql import func
+from sqlalchemy.types import Boolean, Integer, Float
+
+from models.car import Car
 from fastapi import HTTPException
 from typing import Any
 
@@ -42,6 +48,32 @@ def _resolve_column(field: str, primary_model, related_models: dict):
 
 
 # ── Core utils ────────────────────────────────────────────────────────────────
+
+
+def apply_search(query: Query, search: str, primary_model, related_models: dict = {}, joined: set = None) -> Query: #type: ignore
+    if joined is None:
+        joined = set()
+    if not search or not search.strip():
+        return query
+
+    term = f"%{search.strip()}%"
+
+    # Join Car if not already joined (assuming primary is Inventory)
+    if Car not in joined and primary_model != Car:
+        query = query.join(Car)
+        joined.add(Car)
+
+    query = query.filter(
+        or_(
+            Car.make.ilike(term),
+            Car.model.ilike(term),
+            Car.year.cast(String).ilike(term),
+            Car.category.ilike(term),
+            Car.engine.has(Car.engine.property.mapper.class_.fuel_type.ilike(term)),
+        )
+    )
+    return query
+
 
 
 def apply_filters(
