@@ -16,7 +16,7 @@ from services.query_utils import apply_pagination, apply_filters, apply_search, 
 from models import Inventory
 
 router = APIRouter(
-    dependencies=[Security(get_verified_admin)], prefix="/cars", tags=["cars"]
+     prefix="/cars", tags=["cars"]
 )
 
 
